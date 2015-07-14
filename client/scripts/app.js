@@ -63,6 +63,7 @@ app.roomList = function(results){
 
 app.addRoom = function(roomName){
   //use jQuery to select #roomSelect and append a option element with desired room name
+  roomName = app.escapeHtml(roomName);
   $("#roomSelect").append('<option>'+ roomName + '</option>');
 };
 
@@ -71,30 +72,56 @@ app.clearMessages = function() {
 };
 
 app.addMessage = function(message) {
+  message.username = app.escapeHtml(message.username);
+  message.text = app.escapeHtml(message.text);
   $("#chats").append('<div class="chat">'    + '<span class="username">' +message.username+'</span>' +
     ': ' + message.text + '@ ' + message.createdAt    + '</div>');
-  //app.addMessage(alert(1))
 };
 
-// app.fetch();
-// setInterval(app.fetch, 1000);
+app.escapeHtml = function(unsafe) {
+  if(unsafe !== null && unsafe !== undefined){
 
+    return unsafe  
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+    }
+};
 
-$(document).ready(function(){
-  $('#submit').on('click', function() {
-    console.log("Submit was pressed");
-    var roomname = $('#roomSelect').val();
-    var text = $('#text').val();
+app.handleSubmit = function(event){
+  event.preventDefault();
+  console.log("Submit was pressed");
+  var roomname = $('#roomSelect').val();
+  //if (roomname !=="Select a chat room:") {
+    var text = $('#message').val();
     var username = window.location.search.split('').splice(10).join('');
     var message = {
       username: username,
       text: text,
       roomname: roomname
-    };
+      };
     console.log(message);
     app.send(message);
+  //}
+};
+
+// return !!unsafe ? case1 : case2;
+
+app.fetch();
+setInterval(app.fetch, 1000);
+
+
+$(document).ready(function(){
+  $('#send .submit').on('click', function(event){
+    
+    //event.preventDefault();
+    app.handleSubmit(event);
   });
-  
+  $('#send .submit').on('submit', function(){
+    $(this).trigger('click');
+  });
 });
 
 
