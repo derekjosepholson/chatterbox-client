@@ -1,0 +1,29 @@
+$(document).ready(function(){
+  $('#submit').on('click', function(event) {
+    event.preventDefault();
+    console.log("Submit was pressed");
+    var roomname = $('#roomname').val();
+    var text = $('#text').val();
+    var username = window.location.search.split('').splice(10).join('');
+    var message = {
+      username: username,
+      text: text,
+      roomname: roomname
+    };
+    console.log(message);
+    app.send(message);
+  });
+
+  // ?username=USERNAMEHERE
+
+
+
+
+  function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
