@@ -16,8 +16,8 @@
 
   // ?username=USERNAMEHERE
 
-
-
+var unsafe = $('element').text();
+         var safe = $('<span></span>').text(unsafe).html();
 
 function escapeHtml(unsafe) {
   return unsafe
@@ -32,3 +32,7 @@ var string = "<script></script>";
 
 console.log(string);
 console.log(escapeHtml(string));
+
+// <script></script>
+// &lt;script&gt;&lt;/script&gt;
+// [Finished in 0.1s]

@@ -3,7 +3,8 @@
 // main app object, server property specifies the url to send GET and POST requests
 var app = {
   server: 'https://api.parse.com/1/classes/chatterbox',
-  rooms: {}
+  rooms: {},
+  roomname: ''
 };
 
 // functionality is TBA
@@ -38,7 +39,9 @@ app.fetch = function(){
       var results = data.results;
       app.roomList(results);
       for(var index = 0; index < results.length; index++){
-        app.addMessage(results[index]);
+        if(results[index].roomname === app.roomname) {
+          app.addMessage(results[index]);
+        }
         // console.log(results[index].roomname);
       }
 
@@ -94,7 +97,7 @@ app.handleSubmit = function(event){
   event.preventDefault();
   console.log("Submit was pressed");
   var roomname = $('#roomSelect').val();
-  //if (roomname !=="Select a chat room:") {
+  if (roomname !=="Select a chat room:" && roomname !=="Create New Room") {
     var text = $('#message').val();
     var username = window.location.search.split('').splice(10).join('');
     var message = {
@@ -104,7 +107,13 @@ app.handleSubmit = function(event){
       };
     console.log(message);
     app.send(message);
-  //}
+  }else if(roomname ==="Create New Room"){
+    var newRoomName = $('#message').val();
+    if(typeof app.rooms[newRoomName] === 'undefined'){ //not in the rooms, so add it
+      app.rooms[newRoomName] = true;
+      app.addRoom(newRoomName);
+    }
+  }
 };
 
 // return !!unsafe ? case1 : case2;
@@ -115,12 +124,21 @@ setInterval(app.fetch, 1000);
 
 $(document).ready(function(){
   $('#send .submit').on('click', function(event){
-    
-    //event.preventDefault();
     app.handleSubmit(event);
   });
   $('#send .submit').on('submit', function(){
     $(this).trigger('click');
+  });
+
+  $('#roomSelect').on('change', function(){
+    if($(this).val() === 'Create New Room'){
+      $('#message').attr('placeholder', 'Type here to create room');
+    }else if($(this).val() !== 'Select a chat room:'){
+      app.roomname = $(this).val();
+      $('#message').attr('placeholder', 'Enter chat message here'); 
+    }else{ //don't show any messages on page
+      $('#message').attr('placeholder', '');
+    }
   });
 });
 
