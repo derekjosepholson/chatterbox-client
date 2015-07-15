@@ -36,3 +36,17 @@ console.log(escapeHtml(string));
 // <script></script>
 // &lt;script&gt;&lt;/script&gt;
 // [Finished in 0.1s]
+
+// jQuery has a .class method that selects all elements of a specified class that we can use
+
+// Maybe we can change app.addMessage to change the username to a clickable link
+// then we put the text of the message inside a span element. All of these things would 
+// have a class attribute set to the username. Then we set up a click handler for 
+// the 
+
+// make all usernames clickable links, set up an event listener that grabs their html value on click
+// make each message text in the app.addMessage into a span element with a class attribute set 
+// to the username of the message. Then in the event handler, we can grab all elements with the proper 
+// class and change the css to bold. We could optionally also add in functionality where if you click on 
+// the username of a 'friend', it unfriends them and unbolds all of their messages
+

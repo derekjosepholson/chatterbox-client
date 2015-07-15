@@ -4,7 +4,8 @@
 var app = {
   server: 'https://api.parse.com/1/classes/chatterbox',
   rooms: {},
-  roomname: ''
+  roomname: '',
+  friends: {}
 };
 
 // functionality is TBA
@@ -39,12 +40,22 @@ app.fetch = function(){
       var results = data.results;
       app.roomList(results);
       for(var index = 0; index < results.length; index++){
-        if(results[index].roomname === app.roomname) {
+        if(results[index].roomname === app.roomname && app.roomname !== '') {
           app.addMessage(results[index]);
         }
         // console.log(results[index].roomname);
       }
-
+      //after we added our data, try and use jquery here
+      app.addFriend();
+      $('.chat .username').on('click',function(){
+        app.addFriend();
+        if(!app.friends.hasOwnProperty($(this).html())){
+          console.log($(this).html());
+          app.friends[$(this).html()] = $(this).html();
+        }else{
+          delete app.friends[$(this).html()];
+        }
+      });  //only place we can access all we need  
     },
     error: function (data) {
     // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -78,7 +89,7 @@ app.addMessage = function(message) {
   message.username = app.escapeHtml(message.username);
   message.text = app.escapeHtml(message.text);
   $("#chats").append('<div class="chat">'    + '<span class="username">' +message.username+'</span>' +
-    ': ' + message.text + '@ ' + message.createdAt    + '</div>');
+    ': ' + '<span class="'+message.username+'">' + message.text + '</span> </div>');
 };
 
 app.escapeHtml = function(unsafe) {
@@ -116,6 +127,12 @@ app.handleSubmit = function(event){
   }
 };
 
+app.addFriend = function(){ //makes friends bold
+  for(var key in app.friends){
+    $('.'+key).css('font-weight','bold');
+  }
+};
+
 // return !!unsafe ? case1 : case2;
 
 app.fetch();
@@ -123,9 +140,11 @@ setInterval(app.fetch, 1000);
 
 
 $(document).ready(function(){
+
   $('#send .submit').on('click', function(event){
     app.handleSubmit(event);
   });
+
   $('#send .submit').on('submit', function(){
     $(this).trigger('click');
   });
@@ -133,13 +152,19 @@ $(document).ready(function(){
   $('#roomSelect').on('change', function(){
     if($(this).val() === 'Create New Room'){
       $('#message').attr('placeholder', 'Type here to create room');
+       app.roomname = '';
     }else if($(this).val() !== 'Select a chat room:'){
       app.roomname = $(this).val();
-      $('#message').attr('placeholder', 'Enter chat message here'); 
+      $('#message').attr('placeholder', 'Enter chat message here');
     }else{ //don't show any messages on page
       $('#message').attr('placeholder', '');
+      app.roomname = '';
     }
   });
+  
+  $('.chat .username').on('click',function(){alert(1);});
+  //console.log($('.chat'));  // <-- bad because elements are not loaded yet
+
 });
 
 
